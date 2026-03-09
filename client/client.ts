@@ -1,4 +1,4 @@
-// Client
-console.log("My address:", pg.wallet.publicKey.toString());
+// Cliente - Sistema de compra de medicamentos
+console.log("Client wallet:", pg.wallet.publicKey.toString());
 const balance = await pg.connection.getBalance(pg.wallet.publicKey);
-console.log(`My balance: ${balance / web3.LAMPORTS_PER_SOL} SOL`);
+console.log(`Available balance for buying medicines: ${balance / web3.LAMPORTS_PER_SOL} SOL`);
