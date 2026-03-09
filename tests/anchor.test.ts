@@ -1,34 +1,38 @@
 // No imports needed: web3, anchor, pg and more are globally available
 
-describe("Test", () => {
-  it("initialize", async () => {
-    // Generate keypair for the new account
-    const newAccountKp = new web3.Keypair();
+describe("Farmacia", () => {
+  it("crear farmacia", async () => {
 
-    // Send transaction
-    const data = new BN(42);
+    // Generar keypair para la nueva cuenta de farmacia
+    const farmaciaKp = new web3.Keypair();
+
+    // Nombre de la farmacia
+    const nombre = "Farmacia Solana";
+
+    // Enviar transacción
     const txHash = await pg.program.methods
-      .initialize(data)
+      .crearFarmacia(nombre)
       .accounts({
-        newAccount: newAccountKp.publicKey,
-        signer: pg.wallet.publicKey,
+        farmacia: farmaciaKp.publicKey,
+        owner: pg.wallet.publicKey,
         systemProgram: web3.SystemProgram.programId,
       })
-      .signers([newAccountKp])
+      .signers([farmaciaKp])
       .rpc();
+
     console.log(`Use 'solana confirm -v ${txHash}' to see the logs`);
 
-    // Confirm transaction
+    // Confirmar transacción
     await pg.connection.confirmTransaction(txHash);
 
-    // Fetch the created account
-    const newAccount = await pg.program.account.newAccount.fetch(
-      newAccountKp.publicKey
+    // Obtener la cuenta creada en la blockchain
+    const farmacia = await pg.program.account.farmacia.fetch(
+      farmaciaKp.publicKey
     );
 
-    console.log("On-chain data is:", newAccount.data.toString());
+    console.log("Datos on-chain:", farmacia);
 
-    // Check whether the data on-chain is equal to local 'data'
-    assert(data.eq(newAccount.data));
+    // Verificar que el nombre se guardó correctamente
+    assert(farmacia.nombre === nombre);
   });
 });
